@@ -1,52 +1,77 @@
-<p align="center">
-<img src="https://i.imgur.com/Clzj7Xs.png" alt="osTicket logo"/>
-</p>
+#!/bin/bash
 
-<h1>osTicket - Prerequisites and Installation</h1>
-This tutorial outlines the prerequisites and installation of the open-source help desk ticketing system osTicket.<br />
+#Installing everything for OSTicket from a fresh, minimal install of Fedora 27
 
+#Credits
+#Remi for making older PHP available:  https://rpms.remirepo.net/
+#Scott Alan Miller for knowing what packages to install:  https://mangolassi.it/topic/11624/installing-osticket-1-10-on-centos-7
 
+# Let's set some variables
 
-<h2>Environments and Technologies Used</h2>
+remiFedora25RepoURL=http://rpms.remirepo.net/fedora/remi-release-25.rpm
+remiPGPKey=https://rpms.remirepo.net/RPM-GPG-KEY-remi
+remiPGPKey2017=https://rpms.remirepo.net/RPM-GPG-KEY-remi2017
+remiPGPKey2018=https://rpms.remirepo.net/RPM-GPG-KEY-remi2018
+installPackages="wget unzip mariadb mariadb-server httpd php70-php php70-php-mysql php70-php-imap php70-php-xml php70-php-mbstring php70-php-pecl-apcu php70-php-pecl-zendopcache php70-php-intl php70-php-gd"
+serverFQDN=osticket.lab.ejs.llc
+OSTicketDownloadURL=http://osticket.com/sites/default/files/download/osTicket-v1.10.4.zip
+OSTicketZipFile=osTicket-v1.10.4.zip
+apacheOSTicketDir=/var/www/html/
 
-- Microsoft Azure (Virtual Machines/Compute)
-- Remote Desktop
-- Internet Information Services (IIS)
+echo "Settting the hostname"
 
-<h2>Operating Systems Used </h2>
+hostnamectl set-hostname $serverFQDN
 
-- Windows 10</b> (21H2)
+echo "Installing Remi's Repo for php 7.0"
 
-<h2>List of Prerequisites</h2>
+dnf install $remiFedora25RepoURL -y
+dnf config-manager --set-enabled remi
 
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-- Item 5
+echo "Importing Remi's PGP Keys"
 
-<h2>Installation Steps</h2>
+rpm --import $remiPGPKey
+rpm --import $remiPGPKey2017
+rpm --import $remiPGPKey2018
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+echo "Installing Packages"
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+dnf install $installPackages -y
 
-<p>
-<img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
-</p>
-<p>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-</p>
-<br />
+echo "All done installing dependencies"
+
+echo "Starting and enabling Apache"
+
+systemctl start httpd
+systemctl enable httpd
+
+echo "Opening port 80 on the public firewall"
+
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --reload
+
+echo "Starting and enabling MariaDB"
+
+systemctl start mariadb
+systemctl enable mariadb
+
+echo "Downloading OSTicket to /tmp"
+
+cd /tmp/
+wget $OSTicketDownloadURL
+
+echo "Installing to $apacheOSTicketDir"
+
+unzip $OSTicketZipFile
+cp -rpv upload/* $apacheOSTicketDir
+cp $apacheOSTicketDir/include/ost-sampleconfig.php $apacheOSTicketDir/include/ost-config.php
+chmod 0666 $apacheOSTicketDir/include/ost-config.php
+chown -R apache:apache $apacheOSTicketDir
+
+echo "Dealing with SELinux"
+
+chcon -t httpd_sys_rw_content_t $apacheOSTicketDir -R
+
+echo "Script has completed.  Next you will need to configure MySQL."
+echo "Finally, load your webpage to complete the installation of OSTicket."
+echo "Enjoy!"
+echo ""

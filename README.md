@@ -103,3 +103,11 @@ Refresh the osTicket site in your browser
 Observe the changes
 
 Rename: From: C:\inetpub\wwwroot\osTicket\include\ost-sampleconfig.php To: C:\inetpub\wwwroot\osTicket\include\ost-config.php
+  
+</p>
+<br />
+
+<p>
+<img src="https://i.imgur.com/ERQfN62.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
+</p>
+<p>

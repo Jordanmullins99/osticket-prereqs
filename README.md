@@ -32,15 +32,19 @@ Wait for the installation to complete and hit Close
 <img src="https://i.imgur.com/DJmEXEB.png" height="80%" width="80%" alt="Disk Sanitization Steps"/>
 </p>
 <p>
-Install Web Platform Installer (download from within lab files: https://drive.google.com/drive/u/1/folders/1APMfNyfNzcxZC6EzdaNfdZsUwxWYChf6)
+Install Web Platform Installer (download from within lab files: <a href="https://drive.google.com/drive/u/1/folders/1APMfNyfNzcxZC6EzdaNfdZsUwxWYChf6"> link)
+
 Open after installation
 Add MySQL 5.5 (it will ask for credentials to be created later)
 Name: root
 Password: Password1
 Add All simple versions of x86 PHP up until 7.3
-Fix any failures if required (download from within lab files: link)
-Install PHP Version 7.3.8 (or any other version if necessary, archives)
+Fix any failures if required (download from within lab files: <a href="https://drive.google.com/drive/u/1/folders/1APMfNyfNzcxZC6EzdaNfdZsUwxWYChf6"> link)
+
+Install PHP Version 7.3.8 (or any other version if necessary, <a href="https://windows.php.net/downloads/releases/archives/"> archives)
+
 Install PHP Manager 1.5.0 for IIS 10 (folder you unzipped on the desktop)
+
 Install Microsoft Visual C++ 2009 Redistributable Package
 
 </p>
